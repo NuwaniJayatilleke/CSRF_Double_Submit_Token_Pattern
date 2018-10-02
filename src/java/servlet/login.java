@@ -10,7 +10,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-
 @WebServlet(name = "login", urlPatterns = {"/login"})
 public class login extends HttpServlet {
 
@@ -28,7 +27,7 @@ public class login extends HttpServlet {
                     if (cookie.getName().equals("JSESSIONID")) {
 
                         // set session id
-                        saveSession(cookie.getValue(), request);
+                        saveSession(response);
 
                         // set session cookie
                         Cookie sessionCookie = new Cookie("sessionID", cookie.getValue());
@@ -41,7 +40,7 @@ public class login extends HttpServlet {
             Cookie usernameCookie = new Cookie("username", username);
             response.addCookie(usernameCookie);
 
-            response.sendRedirect("welcome.jsp");
+            response.sendRedirect("home.jsp");
 
         } else {
             response.sendRedirect("login.jsp");
@@ -49,9 +48,11 @@ public class login extends HttpServlet {
 
     }
 
-    private void saveSession(String sessionId, HttpServletRequest request) {
-        HttpSession session = request.getSession();
-        session.setAttribute(sessionId, getCSRF());
+    private void saveSession(HttpServletResponse response) {
+        // set session cookie
+        Cookie sessionCookie = new Cookie("csrf", getCSRF());
+        response.addCookie(sessionCookie);
+
     }
 
     public String getCSRF() {
